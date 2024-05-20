@@ -2,10 +2,21 @@ import { component$, useContext, useSignal, useVisibleTask$ } from "@builder.io/
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { MyContext } from "./layout";
 
+interface Affirmation {
+  text: string;
+  author: string;
+}
+
+interface MyContextType {
+  affirmations: Affirmation[];
+  openModal: boolean;
+}
+
+
 
 export default component$(() => {
   const displayIndex = useSignal(0)
-  const data = useContext(MyContext)
+  const data = useContext<MyContextType>(MyContext);
 
   useVisibleTask$(({cleanup}) => {
     const interval = setInterval(() => {
