@@ -1,22 +1,38 @@
 import { component$, useContext, useSignal, useStore } from "@builder.io/qwik";
 import { MyContext } from "~/routes/layout";
 
+interface Affirmation {
+    text: string;
+    author: string;
+}
+
+interface MyContextType {
+    affirmations: Affirmation[];
+    openModal: boolean;
+}
 
 export default component$(() => {
     const state = useStore({
         affirmation: ''
     })
     const author = useSignal('')
-    const data = useContext(MyContext)
+    const data = useContext<MyContextType>(MyContext);
 
 
 
   return (
     <div class="fixed top-0 left-0 w-screen h-screen bg-slate-900 p-4 flex flex-col gap-2">
         <p class="text-2xl font-semibold text-center">Add An Affirmation</p>
-        <input  placeholder="Enter Affirmation" onInput$={(e) => {
-                    state.affirmation = e.target.value
-                }} class="bg-transparent outline-none focus:outline-none text-sm sm:text-base p-2 rounded border border-sky-800 focus:border-sky-400 duration-200" />
+        <input 
+                placeholder="Enter Affirmation" 
+                onInput$={(e) => {
+                    const target = e.target as HTMLInputElement;
+                    if (target) {
+                        state.affirmation = target.value;
+                    }
+                }} 
+                class="bg-transparent outline-none focus:outline-none text-sm sm:text-base p-2 rounded border border-sky-800 focus:border-sky-400 duration-200" 
+            />
         <input  bind:value={author} 
                 placeholder="Author"
                 class="bg-transparent outline-none focus:outline-none text-sm sm:text-base p-2 rounded border border-sky-800 focus:border-sky-400 duration-200" />
@@ -40,6 +56,7 @@ export default component$(() => {
                         </div>
                         <i onClick$={() => {
                             data.affirmations = data.affirmations.filter((element, elementIndex) => {
+                                localStorage.setItem('qwik-affirmations', JSON.stringify({affirmations: data.affirmations}))
                                 return elementIndex !== affIndex
                             })
                         }} class="fa-solid fa-minus cursor-pointer hover:scale-125 duration-200"></i>
